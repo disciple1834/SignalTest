@@ -3,6 +3,7 @@ package com.gaochen.signal;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -25,13 +26,19 @@ public class Signal<T> implements Serializable {
 
     private Signal(){}
 
-    public static<S> Signal<S> CREATE(ISignalLauncher<S> launcher){
+    public static<S> Signal<S> CREATE(@NonNull ISignalLauncher<S> launcher){
+        if(launcher == null){
+            throw new IllegalArgumentException("Launcher can not be null!!!");
+        }
         Signal<S> signal = new Signal<>();
         signal.mLauncher = launcher;
         return signal;
     }
 
-    public Signal<T> setupWatcher(ISignalWatcher<T> watcher){
+    public Signal<T> setupWatcher(@NonNull ISignalWatcher<T> watcher){
+        if(watcher == null){
+            throw new IllegalArgumentException("Watcher can not be null!!!");
+        }
         mWatcher = watcher;
         return this;
     }
@@ -67,7 +74,10 @@ public class Signal<T> implements Serializable {
         return subSignal;
     }
 
-    public <E> Signal<E> shift(final ISignalShifter<T,E> shifter){
+    public <E> Signal<E> shift(@NonNull final ISignalShifter<T,E> shifter){
+        if(shifter == null){
+            throw new IllegalArgumentException("Shifter can not be null!!!");
+        }
         Signal<E> subSignal = Signal.CREATE(new ISignalLauncher<E>() {
             @Override
             public void launch(final ISignalSender<E> sender) {
@@ -89,11 +99,17 @@ public class Signal<T> implements Serializable {
         ISignalWatcher<S> sWatcher;
         Handler sHandler;
 
-        public SignalSender(ISignalWatcher<S> watcher){
+        public SignalSender(@NonNull ISignalWatcher<S> watcher){
+            if(watcher == null){
+                throw new IllegalArgumentException("Watcher can not be null!!!");
+            }
             sWatcher = watcher;
         }
 
-        public SignalSender(ISignalWatcher<S> watcher,boolean bSendToMain){
+        public SignalSender(@NonNull ISignalWatcher<S> watcher,boolean bSendToMain){
+            if(watcher == null){
+                throw new IllegalArgumentException("Watcher can not be null!!!");
+            }
             sWatcher = watcher;
             if(bSendToMain){
                 sHandler = new Handler(Looper.getMainLooper()){
